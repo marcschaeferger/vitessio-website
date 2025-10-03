@@ -17,7 +17,7 @@ VTGate requires a cell to operate in. A vtgate’s main job is to forward reques
 Here is a sample vtgate invocation:
 
 ```text
-vtgate <topo_flags> \
+vtgate --topo_implementation=etcd2 --topo_global_server_address=<comma_separated_addresses> --topo_global_root=/vitess/global \\
   --log_dir=${VTDATAROOT}/tmp \
   --cell=cell1 \
   --cells_to_watch=cell1 \

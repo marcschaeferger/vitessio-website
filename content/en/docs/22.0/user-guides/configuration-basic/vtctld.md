@@ -8,7 +8,7 @@ vtctld is not required to be highly available because it is not in the serving p
 Even if brought up within each cell, vtctld itself is not tied to that cell. It will attempt to access all servers of all cells. You can bring up vtctld with the following invocation:
 
 ```sh
-vtctld <topo_flags> <backup_flags> \
+vtctld --topo_implementation=etcd2 --topo_global_server_address=<comma_separated_addresses> --topo_global_root=/vitess/global <backup_flags> \\
   --log_dir=${VTDATAROOT}/tmp \
   --port=15000 \
   --grpc_port=15999 \

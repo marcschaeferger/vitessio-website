@@ -123,7 +123,7 @@ When starting vttablet, the following additional flag must be specified:
 
 VTTablet should be brought up on the same machine as the MySQL instance. It needs the following flags:
 
-* <topo_flags> and <backup_flags>.
+* Set the topo flags explicitly: `--topo_implementation=etcd2`, `--topo_global_server_address=<comma_separated_addresses>`, and `--topo_global_root=/vitess/global`; include `<backup_flags>` if applicable.
 * `tablet-path`: This should be the cell name followed by a `-` and the tablet UID used for `mysqlctl`. VTTablet will infer the `cell` name from this. Example: `cell1-100`.
 * `init_keyspace`: The keyspace that the tablet is going to serve. This will cause a keyspace to be created if one is not present.
 * `init_shard`: The shard that the tablet is going to serve. This will cause a shard to be created if one is not present.
@@ -147,7 +147,7 @@ There are some additional parameters that we recommend setting:
 Here is a typical vttablet invocation:
 
 ```text
-vttablet <topo_flags> <backup_flags> \
+vttablet --topo_implementation=etcd2 --topo_global_server_address=<comma_separated_addresses> --topo_global_root=/vitess/global <backup_flags> \\
   --log_dir=${VTDATAROOT}/tmp \
   --cell=cell1 \
   --tablet-path=cell1-100 \

@@ -30,6 +30,7 @@ vtgate --topo_implementation=etcd2 --topo_global_server_address=<comma_separated
   --service_map='grpc-vtgateservice' \
   --vschema_ddl_authorized_users='dba%'
 ```
+
 VTGate uses the global topo to get the topo addresses of the cells it has to watch. For this reason, you do not need to specify the topo addresses for the current cell.
 
 VTGate does not require `<backup_flags>`.

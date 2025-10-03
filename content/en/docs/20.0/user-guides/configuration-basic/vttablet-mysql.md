@@ -32,6 +32,7 @@ mysqlctl \
 `mysqlctl` **will not** read configuration files from common locations such as `/etc/my.cnf` or `/etc/mysql/my.cnf`. Instead, it will create a separate `my.cnf` config file using builtin defaults. The source files can be found [here](https://github.com/vitessio/vitess/tree/main/config/mycnf). To add your own settings, you can set the `EXTRA_MY_CNF` environment variable to a list of colon-separated files. Alternatively, you can override the default behavior by specifying your own template file using the `-mysqlctl_mycnf_template` command line argument.
 
 For example, to override the default innodb buffer pool size, you would create a file named `/path/to/common.cnf` as follows:
+
 ```text
 innodb_buffer_pool_size=1G
 ```
@@ -55,7 +56,7 @@ When specifying additional configuration changes to Vitess, please keep in mind 
 | `binlog-format`     | Vitess only supports row-based replication. Do not change this setting from the included configuration files. |
 | `binlog-row-image`  | Vitess only supports the default value (`FULL`) |
 | `log-slave-updates` | Vitess requires this setting enabled, as it is in the included configuration files. |
-| `character-set\*`   | Vitess only supports `utf8` (and variants such as `utf8mb4`) | 
+| `character-set\*`   | Vitess only supports `utf8` (and variants such as `utf8mb4`) |
 | `gtid-mode`         | Vitess relies on GTIDs to track changes to topology. |
 | `gtid-strict-mode`/`enforce-gtid-consistency` | Vitess requires this setting to be unchanged. |
 
@@ -106,7 +107,7 @@ The MySQL instance that was brought up has no identity related to keyspace or sh
 
 To enable communication with vttablet, the server must be configured to receive grpc messages on a unix domain socket:
 
-```
+```sh
 mysqlctld \
   --log_dir=${VTDATAROOT}/tmp \
   --tablet_uid=100 \
@@ -116,9 +117,10 @@ mysqlctld \
 
 When starting vttablet, the following additional flag must be specified:
 
-```
+```text
 --mysqlctl_socket=/path/to/socket_file
 ```
+
 ## Starting vttablet
 
 VTTablet should be brought up on the same machine as the MySQL instance. It needs the following flags:
@@ -166,10 +168,10 @@ vttablet --topo_implementation=etcd2 --topo_global_server_address=<comma_separat
 
 ### Key configuration notes
 
-* It is important to set MySQL’s `max_connections` property to be 50%-100% higher than the total number of connections in the various pools. 
-	* This is because Vitess may have to kill connections and open new ones. MySQL accounting has a delay in how it counts closed connections, which may cause its view of the number of connections to exceed the ones currently opened by Vitess. For example, in the above example, the `max_connections` settings should be around 800.
+* It is important to set MySQL’s `max_connections` property to be 50%-100% higher than the total number of connections in the various pools.
+  * This is because Vitess may have to kill connections and open new ones. MySQL accounting has a delay in how it counts closed connections, which may cause its view of the number of connections to exceed the ones currently opened by Vitess. For example, in the above example, the `max_connections` settings should be around 800.
 * It is also important to set vttablets `queryserver-config-idle-timeout` to be at least 10% lower than MySQL's `wait_timeout`.
-	* This is because MySQL's `wait_timeout` is the number of seconds the server waits for activity on a noninteractive connection before closing it. So if the vttablet setting is not lower the MySQL limit will be hit first and can cause issues with performance. The defaults are as follows: `queryserver-config-idle-timeout` defaults to 30 minutes and MySQL's `wait_timeout` defaults to 8 hours. 
+  * This is because MySQL's `wait_timeout` is the number of seconds the server waits for activity on a noninteractive connection before closing it. So if the vttablet setting is not lower the MySQL limit will be hit first and can cause issues with performance. The defaults are as follows: `queryserver-config-idle-timeout` defaults to 30 minutes and MySQL's `wait_timeout` defaults to 8 hours.
 
 It is normal to see errors like these in the log file until MySQL instances have been initialized and a vttablet has been elected as primary:
 
@@ -216,4 +218,3 @@ It is recommended that you delete the tablet record if you intend to bring down 
 ```text
 vtctldclient DeleteTablets cell1-100
 ```
-
